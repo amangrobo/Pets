@@ -129,7 +129,7 @@ public class EditorActivity extends AppCompatActivity {
         PetDbHelper mDbHelper = new PetDbHelper(this);
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        
+
         ContentValues contentValues = new ContentValues();
         contentValues.put(PetContract.PetEntry.COLUMN_PET_NAME, mNameEditText.getText().toString().trim());
         contentValues.put(PetContract.PetEntry.COLUMN_PET_BREED, mBreedEditText.getText().toString().trim());
