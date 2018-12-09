@@ -63,6 +63,12 @@ public class CatalogActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        displayDatabaseInfo();
+    }
+
     private void displayDatabaseInfo() {
 
         // Create and/or open a database to read from it
