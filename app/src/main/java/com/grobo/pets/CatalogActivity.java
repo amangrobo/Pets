@@ -1,14 +1,24 @@
 package com.grobo.pets;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+
+import com.grobo.pets.data.PetContract;
+import com.grobo.pets.data.PetDbHelper;
 
 public class CatalogActivity extends AppCompatActivity {
+
+    private PetDbHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +34,9 @@ public class CatalogActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        mDbHelper = new PetDbHelper(this);
+        displayDatabaseInfo();
     }
 
     @Override
@@ -40,7 +53,8 @@ public class CatalogActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Insert dummy data" menu option
             case R.id.action_insert_dummy_data:
-                // Do nothing for now
+                insertPet();
+                displayDatabaseInfo();
                 return true;
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
@@ -50,5 +64,74 @@ public class CatalogActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    
+    @Override
+    protected void onStart() {
+        super.onStart();
+        displayDatabaseInfo();
+    }
+
+    private void displayDatabaseInfo() {
+
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        String[] projection = {
+                BaseColumns._ID, PetContract.PetEntry.COLUMN_PET_NAME,
+                PetContract.PetEntry.COLUMN_PET_BREED,
+                PetContract.PetEntry.COLUMN_PET_GENDER,
+                PetContract.PetEntry.COLUMN_PET_WEIGHT
+        };
+
+        String selection = PetContract.PetEntry.COLUMN_PET_NAME + " =?";
+        String[] selectionArgs = {"Tommy"};
+
+        Cursor cursor = db.query(
+                PetContract.PetEntry.TABLE_NAME, projection,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        TextView displayView = (TextView) findViewById(R.id.text_view_pet);
+
+        try {
+            displayView.setText("The pets table contains " + cursor.getCount() + " pets.\n\n");
+
+            displayView.append(PetContract.PetEntry._ID + " - "
+                    + PetContract.PetEntry.COLUMN_PET_NAME + " - "
+                    + PetContract.PetEntry.COLUMN_PET_BREED + " - "
+                    + PetContract.PetEntry.COLUMN_PET_GENDER + " - "
+                    + PetContract.PetEntry.COLUMN_PET_WEIGHT + "\n");
+
+            while (cursor.moveToNext()) {
+                int currentId = cursor.getInt(cursor.getColumnIndex(PetContract.PetEntry._ID));
+                String currentName = cursor.getString(cursor.getColumnIndex(PetContract.PetEntry.COLUMN_PET_NAME));
+                String currentBreed = cursor.getString(cursor.getColumnIndex(PetContract.PetEntry.COLUMN_PET_BREED));
+                int currentGender = cursor.getInt(cursor.getColumnIndex(PetContract.PetEntry.COLUMN_PET_GENDER));
+                int currentWeight = cursor.getInt(cursor.getColumnIndex(PetContract.PetEntry.COLUMN_PET_WEIGHT));
+
+                displayView.append("\n" + currentId + " - "
+                        + currentName + " - "
+                        + currentBreed + " - "
+                        + currentGender + " - "
+                        + currentWeight);
+            }
+
+        } finally {
+            cursor.close();
+        }
+    }
+
+    private void insertPet(){
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PetContract.PetEntry.COLUMN_PET_NAME, "Toto");
+        contentValues.put(PetContract.PetEntry.COLUMN_PET_BREED, "Terrier");
+        contentValues.put(PetContract.PetEntry.COLUMN_PET_GENDER, PetContract.PetEntry.GENDER_MALE);
+        contentValues.put(PetContract.PetEntry.COLUMN_PET_WEIGHT, 7);
+
+        long newRowId = db.insert(PetContract.PetEntry.TABLE_NAME, null, contentValues);
+    }
 }
