@@ -126,24 +126,14 @@ public class EditorActivity extends AppCompatActivity {
 
     private void insertPet(){
 
-        PetDbHelper mDbHelper = new PetDbHelper(this);
-
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
         ContentValues contentValues = new ContentValues();
         contentValues.put(PetContract.PetEntry.COLUMN_PET_NAME, mNameEditText.getText().toString().trim());
         contentValues.put(PetContract.PetEntry.COLUMN_PET_BREED, mBreedEditText.getText().toString().trim());
         contentValues.put(PetContract.PetEntry.COLUMN_PET_GENDER, mGender);
         contentValues.put(PetContract.PetEntry.COLUMN_PET_WEIGHT, Integer.parseInt(mWeightEditText.getText().toString().trim()));
 
-        long newRowId = db.insert(PetContract.PetEntry.TABLE_NAME, null, contentValues);
+        getContentResolver().insert(PetContract.PetEntry.CONTENT_URI, contentValues);
 
-        if (newRowId == -1) {
-            // If the row ID is -1, then there was an error with insertion.
-            Toast.makeText(this, "Error with saving pet", Toast.LENGTH_SHORT).show();
-        } else {
-            // Otherwise, the insertion was successful and we can display a toast with the row ID.
-            Toast.makeText(this, "Pet saved with row id: " + newRowId, Toast.LENGTH_SHORT).show();
-        }
+        Toast.makeText(this, "Pet successfully saved", Toast.LENGTH_SHORT).show();
     }
 }

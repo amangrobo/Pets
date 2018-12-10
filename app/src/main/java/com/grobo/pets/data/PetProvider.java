@@ -7,6 +7,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Log;
 
 public class PetProvider extends ContentProvider {
 
@@ -15,6 +16,7 @@ public class PetProvider extends ContentProvider {
 
     private static final int PETS = 100;
     private static final int PET_ID = 101;
+
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
         // The calls to addURI() go here, for all of the content URI patterns that the provider
@@ -43,6 +45,7 @@ public class PetProvider extends ContentProvider {
             case PETS:
                 cursor = database.query(PetContract.PetEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
+                break;
             case PET_ID:
                 selection = PetContract.PetEntry._ID + "=?";
                 selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
@@ -60,7 +63,25 @@ public class PetProvider extends ContentProvider {
      */
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
-        return null;
+        final int match = sUriMatcher.match(uri);
+
+        switch (match){
+            case PETS:
+                return insertPets(uri, contentValues);
+            default:
+                throw new IllegalArgumentException("Insertion is not supported for " + uri);
+        }
+    }
+
+    private Uri insertPets(Uri uri, ContentValues contentValues){
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+        long rowLongReturned = database.insert(PetContract.PetEntry.TABLE_NAME, null, contentValues);
+
+        if (rowLongReturned == -1) {
+            Log.e(LOG_TAG, "Failed to insert row for " + uri);
+            return null;
+        }
+        return ContentUris.withAppendedId(uri, rowLongReturned);
     }
 
     /**
