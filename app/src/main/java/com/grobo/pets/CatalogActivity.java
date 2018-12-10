@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.design.widget.FloatingActionButton;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.grobo.pets.data.PetContract;
 import com.grobo.pets.data.PetDbHelper;
@@ -72,22 +74,14 @@ public class CatalogActivity extends AppCompatActivity {
 
     private void displayDatabaseInfo() {
 
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
         String[] projection = {
                 BaseColumns._ID, PetContract.PetEntry.COLUMN_PET_NAME,
                 PetContract.PetEntry.COLUMN_PET_BREED,
                 PetContract.PetEntry.COLUMN_PET_GENDER,
-                PetContract.PetEntry.COLUMN_PET_WEIGHT
-        };
+                PetContract.PetEntry.COLUMN_PET_WEIGHT};
 
-        String selection = PetContract.PetEntry.COLUMN_PET_NAME + " =?";
-        String[] selectionArgs = {"Tommy"};
-
-        Cursor cursor = db.query(
-                PetContract.PetEntry.TABLE_NAME, projection,
-                null,
-                null,
+        Cursor cursor = getContentResolver().query(
+                PetContract.PetEntry.CONTENT_URI, projection,
                 null,
                 null,
                 null);
@@ -124,14 +118,13 @@ public class CatalogActivity extends AppCompatActivity {
 
     private void insertPet(){
 
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
         ContentValues contentValues = new ContentValues();
         contentValues.put(PetContract.PetEntry.COLUMN_PET_NAME, "Toto");
         contentValues.put(PetContract.PetEntry.COLUMN_PET_BREED, "Terrier");
         contentValues.put(PetContract.PetEntry.COLUMN_PET_GENDER, PetContract.PetEntry.GENDER_MALE);
         contentValues.put(PetContract.PetEntry.COLUMN_PET_WEIGHT, 7);
 
-        long newRowId = db.insert(PetContract.PetEntry.TABLE_NAME, null, contentValues);
+        Uri returnedUri = getContentResolver().insert(PetContract.PetEntry.CONTENT_URI, contentValues);
+        Toast.makeText(this, "Dummy pet inserted", Toast.LENGTH_SHORT).show();
     }
 }
