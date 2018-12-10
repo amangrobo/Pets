@@ -2,6 +2,7 @@ package com.grobo.pets;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -132,8 +133,12 @@ public class EditorActivity extends AppCompatActivity {
         contentValues.put(PetContract.PetEntry.COLUMN_PET_GENDER, mGender);
         contentValues.put(PetContract.PetEntry.COLUMN_PET_WEIGHT, Integer.parseInt(mWeightEditText.getText().toString().trim()));
 
-        getContentResolver().insert(PetContract.PetEntry.CONTENT_URI, contentValues);
+        Uri returnedUri = getContentResolver().insert(PetContract.PetEntry.CONTENT_URI, contentValues);
 
-        Toast.makeText(this, "Pet successfully saved", Toast.LENGTH_SHORT).show();
+        if (returnedUri == null) {
+            Toast.makeText(this, getString(R.string.editor_insert_pet_failed), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, getString(R.string.editor_insert_pet_successful), Toast.LENGTH_SHORT).show();
+        }
     }
 }

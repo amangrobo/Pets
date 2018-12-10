@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.design.widget.FloatingActionButton;
@@ -123,7 +124,7 @@ public class CatalogActivity extends AppCompatActivity {
         contentValues.put(PetContract.PetEntry.COLUMN_PET_GENDER, PetContract.PetEntry.GENDER_MALE);
         contentValues.put(PetContract.PetEntry.COLUMN_PET_WEIGHT, 7);
 
-        getContentResolver().insert(PetContract.PetEntry.CONTENT_URI, contentValues);
+        Uri returnedUri = getContentResolver().insert(PetContract.PetEntry.CONTENT_URI, contentValues);
         Toast.makeText(this, "Dummy pet inserted", Toast.LENGTH_SHORT).show();
     }
 }
