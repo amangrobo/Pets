@@ -67,13 +67,21 @@ public class PetProvider extends ContentProvider {
 
         switch (match){
             case PETS:
-                return insertPets(uri, contentValues);
+                return insertPet(uri, contentValues);
             default:
                 throw new IllegalArgumentException("Insertion is not supported for " + uri);
         }
     }
 
-    private Uri insertPets(Uri uri, ContentValues contentValues){
+    private Uri insertPet(Uri uri, ContentValues contentValues){
+
+        String name = contentValues.getAsString(PetContract.PetEntry.COLUMN_PET_NAME);
+        Integer gender = contentValues.getAsInteger(PetContract.PetEntry.COLUMN_PET_GENDER);
+        Integer weight = contentValues.getAsInteger(PetContract.PetEntry.COLUMN_PET_WEIGHT);
+        if (name == null) { throw new IllegalArgumentException("Pet requires a name"); }
+        else if (gender != PetContract.PetEntry.GENDER_FEMALE || gender != PetContract.PetEntry.GENDER_MALE || gender != PetContract.PetEntry.GENDER_UNKNOWN) { throw new IllegalArgumentException("Pet requires a proper Gender"); }
+        else if (weight != null && weight < 0) { throw new IllegalArgumentException("Pet requires a name"); }
+
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
         long rowLongReturned = database.insert(PetContract.PetEntry.TABLE_NAME, null, contentValues);
 
