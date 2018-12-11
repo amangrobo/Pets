@@ -86,4 +86,7 @@
 
     <!-- Dialog button text for the option to cancel deletion of the current pet [CHAR LIMIT=20] -->
     <string name="cancel">Cancel</string>
+
+    <string name="delete_all_dialog_msg">Delete all pets?</string>
+
 </resources>
