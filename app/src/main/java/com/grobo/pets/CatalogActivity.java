@@ -1,5 +1,6 @@
 package com.grobo.pets;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -50,9 +51,9 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         petsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(getBaseContext(), EditorActivity.class);
-                i.setData(Uri.withAppendedPath(PetContract.PetEntry.CONTENT_URI, String.valueOf(id)));
-                startActivity(i);
+                Intent intent= new Intent(getBaseContext(), EditorActivity.class);
+                intent.setData(ContentUris.withAppendedId(PetContract.PetEntry.CONTENT_URI, id));
+                startActivity(intent);
             }
         });
 
