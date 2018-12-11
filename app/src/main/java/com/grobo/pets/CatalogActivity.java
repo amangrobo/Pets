@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -45,6 +46,15 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         petsListView = (ListView) findViewById(R.id.pets_list_view);
         View emptyView = findViewById(R.id.empty_view);
         petsListView.setEmptyView(emptyView);
+
+        petsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(getBaseContext(), EditorActivity.class);
+                i.setData(Uri.withAppendedPath(PetContract.PetEntry.CONTENT_URI, String.valueOf(id)));
+                startActivity(i);
+            }
+        });
 
         cursorAdapter = new PetCursorAdapter(this, null);
         petsListView.setAdapter(cursorAdapter);
