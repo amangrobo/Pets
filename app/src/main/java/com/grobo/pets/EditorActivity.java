@@ -1,10 +1,8 @@
 package com.grobo.pets;
 
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
@@ -27,9 +25,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.grobo.pets.R;
 import com.grobo.pets.data.PetContract;
-import com.grobo.pets.data.PetDbHelper;
 
 /**
  * Allows user to create a new pet or edit an existing one.
@@ -99,7 +95,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 if (!TextUtils.isEmpty(selection)) {
                     if (selection.equals(getString(R.string.gender_male))) {
                         mGender = PetContract.PetEntry.GENDER_MALE; // Male
-                    } else if (selection.equals(getString(R.string.gender_female))) {
+                    } if (selection.equals(getString(R.string.gender_female))) {
                         mGender = PetContract.PetEntry.GENDER_FEMALE; // Female
                     } else {
                         mGender = PetContract.PetEntry.GENDER_UNKNOWN; // Unknown
@@ -139,9 +135,13 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             case R.id.action_save:
                 savePet();
                 finish();
+                return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
-                showDeleteConfirmationDialog();
+                if (mCurrentPetUri != null) {
+                    showDeleteConfirmationDialog();
+                    finish();
+                }
                 return true;
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
@@ -328,7 +328,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             } else {
                 Toast.makeText(this, getString(R.string.editor_delete_pet_successful), Toast.LENGTH_SHORT).show();
             }
-            finish();
         }
     }
 }

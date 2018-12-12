@@ -89,4 +89,6 @@
 
     <string name="delete_all_dialog_msg">Delete all pets?</string>
 
+    <string name="unknown_breed_text">Unknown Breed</string>
+
 </resources>
